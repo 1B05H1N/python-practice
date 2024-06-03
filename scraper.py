@@ -10,24 +10,45 @@ Idea taken from https://pythongeeks.org/python-projects/#pq9
 """
 
 import requests
-from flask import Flask, request, Response
+from flask import Flask, request, Response, render_template_string
+from bs4 import BeautifulSoup
+import sys
+from urllib.parse import urljoin
 
 app = Flask(__name__)
+
+# Check if a URL is passed via command line arguments; otherwise, use a default
+if len(sys.argv) > 1:
+    input_url = sys.argv[1]
+else:
+    input_url = 'https://shinnawi.com'
+
+# Ensure the URL starts with http:// or https://
+if not input_url.startswith(('http://', 'https://')):
+    input_url = 'https://' + input_url
 
 @app.route('/')
 def scrape_site():
     # Fetch the URL from query parameters or default to 'shinnawi.com'
-    url = request.args.get('url', 'https://shinnawi.com')
+    url = input_url  # Use the URL specified in the command line argument
     
-    # Ensure the URL contains the HTTP/HTTPS scheme
-    if not url.startswith(('http://', 'https://')):
-        url = 'https://' + url  # Defaulting to 'https://' for security
-
     try:
         response = requests.get(url)
         if response.status_code == 200:
-            # Return the raw HTML content of the site
-            return Response(response.content, mimetype='text/html')
+            soup = BeautifulSoup(response.text, 'html.parser')
+            
+            # Extract all text from paragraphs
+            text = ' '.join(p.text for p in soup.find_all('p'))
+            
+            # Find all image sources
+            images = [img['src'] if img['src'].startswith(('http', 'https')) else urljoin(url, img['src']) 
+                      for img in soup.find_all('img') if 'src' in img.attrs]
+
+            # Construct HTML to display results
+            html_content = f"<h1>Text from {url}</h1><p>{text}</p><h2>Images:</h2>" + \
+                           ''.join(f"<img src='{src}' style='max-width: 200px;'><br>" for src in images)
+            
+            return render_template_string(html_content)
         else:
             # Provide feedback via HTTP response on failure to retrieve the webpage
             return f"Failed to retrieve the webpage. Status code: {response.status_code}", 400
