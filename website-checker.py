@@ -1,4 +1,7 @@
 """
+Website Checker Application
+Taken from https://pythongeeks.org/python-website-connectivity-checker-project/
+
 This script is a simple website checker application built using Tkinter.
 It allows the user to enter a website URL and checks if the website is up or down.
 If the website is up, it opens the URL in the default web browser.
