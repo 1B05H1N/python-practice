@@ -27,3 +27,20 @@ print(binary_search(my_list,-1)) # None
 
 # 1.2 Suppose you double the size of the list. What's the maximum number of steps now?
 # log2(256) = 8
+
+# 1.3 You have a name, and you want to find the person's phone number in the phone book?
+# O(log n) binary search
+
+# 1.4 You have a phone number, and you want to find the person's name in the phone book. (Hint: You'll have to search through the whole book!)
+# O(n) linear search
+
+# 1.5 You want to read every person in the phone book?
+# O(n) linear search
+
+# 1.6 You want to read the numbers of just the As. 
+# O(m + log n) where m is the number of As and n is the number of entries in the phone book.
+
+# Recap Binary Search is a lot faster than simgple search
+# O(log n) is faster than O(n), but it gets a lot faster once the list of items you're searching through grows. 
+# Algo speed isn't measured in seconds, but in growth of the number of operations.
+# Algo times are written in Big O notation.
